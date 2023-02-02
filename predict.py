@@ -69,9 +69,21 @@ class Predictor(BasePredictor):
             default=0,
             description="temperature to use for sampling",
         ),
+        best_of: int = Input(
+            default=5,
+            description="number of candidates when sampling with non-zero temperature",
+        ),
+        beam_size: int = Input(
+            default=5,
+            description="Number of beams in beam search, only applicable when temperature is zero",
+        ),
         patience: float = Input(
             default=None,
             description="optional patience value to use in beam decoding, as in https://arxiv.org/abs/2204.05424, the default (1.0) is equivalent to conventional beam search",
+        ),
+        length_penalty: float = Input(
+            default=None,
+            description="optional token length penalty coefficient (alpha) as in https://arxiv.org/abs/1609.08144, uses simple length normalization by default",
         ),
         suppress_tokens: str = Input(
             default="-1",
@@ -116,7 +128,10 @@ class Predictor(BasePredictor):
 
         args = {
             "language": language,
+            "best_of": best_of,
+            "beam_size": beam_size,
             "patience": patience,
+            "length_penalty": length_penalty,
             "suppress_tokens": suppress_tokens,
             "initial_prompt": initial_prompt,
             "condition_on_previous_text": condition_on_previous_text,
